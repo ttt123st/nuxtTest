@@ -1,0 +1,220 @@
+{
+    "affenpinscher": "アーフェンピンシャー",
+    "african": "リカオン",
+    "airedale": "エアデール・テリア",
+    "akita": "秋田犬",
+    "appenzeller": "アッペンツェラー",
+
+    "australian": "シェパード",
+    "australian/shepherd": "オーストラリアン・シェパード",
+
+    "basenji": "バセンジー",
+    "beagle": "ビーグル",
+    "bluetick": "ブルーティック",
+    "borzoi": "ボルゾイ",
+    "bouvier": "ブービエ",
+    "boxer": "ボクサー",
+    "brabancon": "ブラバンソン",
+    "briard": "ブリアード",
+
+    "buhund": "ブーフント",
+    "buhund/norwegian": "ノルウェジアン・ブーフント",
+
+    "bulldog": "ブルドッグ",
+    "bulldog/boston": "ボストン・ブルドッグ",
+    "bulldog/english": "イングリッシュ・ブルドッグ",
+    "bulldog/french": "フレンチ・ブルドッグ",
+
+    "bullterrier": "ブルテリア",
+    "bullterrier/staffordshire": "スタッフォードシャー・ブルテリア",
+
+    "cairn": "ケアーン",
+
+    "cattledog": "キャトル・ドッグ",
+    "cattledog/australian": "オーストラリアン・キャトル・ドッグ",
+
+    "chihuahua": "チワワ",
+    "chow": "チャウ・チャウ",
+    "clumber": "クランバー",
+    "cockapoo": "コッカープー",
+
+    "collie": "コリー", 
+    "collie/border": "ボーダー・コリー",
+
+    "coonhound": "クーンハウンド",
+
+    "corgi": "コーギー",
+    "corgi/cardigan": "コーギー・カーディガン",
+
+    "cotondetulear": "コトン・ド・テュレアール",
+    "dachshund": "ダックスフント",
+    "dalmatian": "ダルメシアン",
+
+    "dane": "デーン",
+    "dane/great": "グレート・デーン",
+
+    "deerhound": "ディアハウンド",
+    "deerhound/scottish": "スコティッシュ・ディアハウンド",
+
+    "dhole": "ドール",
+    "dingo": "ディンゴ",
+    "doberman": "ドーベルマン", 
+
+    "elkhound": "エルクハウンド",
+    "elkhound/norwegian": "ノルウェジアン・エルクハウンド",
+
+    "entlebucher": "エントレブッハー",
+    "eskimo": "エスキモー",
+
+    "finnish": "ラップフンド",
+    "finnish/lapphund": "フィニッシュ・ラップフンド",
+
+    "germanshepherd": "ジャーマン・シェパード",
+
+    "greyhound": "グレイハウンド",
+    "greyhound/italian": "イタリアン・グレイハウンド",
+
+    "groenendael": "グローネンダール",
+    "havanese": "ハバニーズ",
+
+    "hound": "ハウンド",
+    "hound/afghan": "アフガン・ハウンド",
+    "hound/basset": "バセット・ハウンド",
+    "hound/blood": "ブラッドハウンド",
+    "hound/english": "イングリッシュ・フォックスハウンド",
+    "hound/ibizan": "イビザン・ハウンド",
+    "hound/plott": "プロット・ハウンド",
+    "hound/walker": "ウォーカー・クーンハウンド",
+
+    "husky": "ハスキー",
+    "keeshond": "キースホンド",
+    "kelpie": "ケルピー",
+    "komondor": "コモンドール",
+    "kuvasz": "クーバース",
+    "labrador": "ラブラドール・レトリーバー",
+    "leonberg": "レオンベルガー",
+    "lhasa": "ラサ・アプソ",
+    "malamute": "マラミュート",
+    "malinois": "マリノア",
+    "maltese": "マルチーズ",
+
+    "mastiff": "マスティフ",
+    "mastiff/bull": "ブルマスティフ",
+    "mastiff/english": "イングリッシュ・マスティフ",
+    "mastiff/tibetan": "チベタン・マスティフ",
+
+    "mexicanhairless": "メキシカン・ヘアレス・ドッグ",
+    "mix": "ミックス犬",
+
+    "mountain": "マウンテン・ドッグ",
+    "mountain/bernese": "バーニーズ・マウンテン・ドッグ",
+    "mountain/swiss": "スイス・マウンテン・ドッグ",
+
+    "newfoundland": "ニューファンドランド",
+    "otterhound": "オッターハウンド",
+
+    "ovcharka": "オフチャルカ",
+    "ovcharka/caucasian": "コーカシアン・オフチャルカ",
+
+    "papillon": "パピヨン",
+    "pekinese": "ペキニーズ",
+    "pembroke": "ペンブローク",
+
+    "pinscher": "ピンシャー",
+    "pinscher/miniature": "ミニチュア・ピンシャー",
+
+    "pitbull": "ピット・ブル・テリア",
+
+    "pointer": "ポインター",
+    "pointer/german": "ジャーマン・ショートヘアード・ポインター",
+    "pointer/germanlonghair": "ジャーマン・ロングヘアード・ポインター",
+    "pomeranian": "ポメラニアン",
+
+    "poodle": "プードル",
+    "poodle/miniature": "ミニチュア・プードル",
+    "poodle/standard": "スタンダード・プードル",
+    "poodle/toy": "トイ・プードル",
+
+    "pug": "パグ",
+    "puggle": "パグル",
+    "pyrenees": "ピレニーズ",
+    "redbone": "レッドボーン",
+
+    "retriever": "レトリーバー",
+    "retriever/chesapeake": "チェサピーク・ベイ・レトリーバー",
+    "retriever/curly": "カーリーコーテッド・レトリーバー",
+    "retriever/flatcoated": "フラットコーテッド・レトリーバー",
+    "retriever/golden": "ゴールデン・レトリバー",
+
+    "ridgeback": "リッジバック",
+    "ridgeback/rhodesian": "ローデシアン・リッジバック",
+
+    "rottweiler": "ロットワイラー",
+    "saluki": "サルーキ",
+    "samoyed": "サモエド", 
+    "schipperke": "スキッパーキ", 
+
+    "schnauzer": "シュナウザー",
+    "schnauzer/giant": "ジャイアント・シュナウザー",
+    "schnauzer/miniature": "ミニチュア・シュナウザー",
+
+    "setter": "セッター",
+    "setter/english": "イングリッシュ・セッター",
+    "setter/gordon": "ゴードン・セッター",
+    "setter/irish": "アイリッシュ・セッター",
+
+    "sheepdog": "シープドッグ",
+    "sheepdog/english": "イングリッシュ・シープドッグ",
+    "sheepdog/shetland": "シェットランド・シープドッグ",
+
+    "shiba": "柴犬",
+    "shihtzu": "シーズー",
+
+    "spaniel": "スパニエル",
+    "spaniel/blenheim": "ブレンハイム・スパニエル",
+    "spaniel/brittany": "ブリタニー・スパニエル",
+    "spaniel/cocker": "コッカー・スパニエル",
+    "spaniel/irish": "アイリッシュ・ウォーター・スパニエル",
+    "spaniel/japanese": "狆",
+    "spaniel/sussex": "サセックス・スパニエル",
+    "spaniel/welsh": "ウェルシュ・スプリンガー・スパニエル",
+
+    "springer": "スプリンガー",
+    "springer/english": "イングリッシュ・スプリンガー・スパニエル",
+
+    "stbernard": "セント・バーナード",
+
+    "terrier": "テリア", 
+    "terrier/american": "アメリカン・テリア",
+    "terrier/australian": "オーストラリアン・テリア",
+    "terrier/bedlington": "ベドリントン・テリア",
+    "terrier/border": "ボーダー・テリア",
+    "terrier/dandie": "ダンディ・テリア",
+    "terrier/fox": "フォックス・テリア",
+    "terrier/irish": "アイリッシュ・テリア",
+    "terrier/kerryblue": "ケリー・ブルー・テリア",
+    "terrier/lakeland": "レークランド・テリア",
+    "terrier/norfolk": "ノーフォーク・テリア",
+    "terrier/norwich": "ノーリッチ・テリア",
+    "terrier/patterdale": "パタデール・テリア",
+    "terrier/russell": "ジャック・ラッセル・テリア",
+    "terrier/scottish": "スコティッシュ・テリア",
+    "terrier/sealyham": "シーリハム・テリア",
+    "terrier/silky": "シルキー・テリア",
+    "terrier/tibetan": "チベタン・テリア",
+    "terrier/toy": "トイ・フォックス・テリア",
+    "terrier/westhighland": "ウエスト・ハイランド・ホワイト・テリア",
+    "terrier/wheaten": "ソフトコーテッド・ウィートン・テリア",
+    "terrier/yorkshire": "ヨークシャー・テリア",
+
+    "vizsla": "ビズラ",
+
+    "waterdog": "ウォーター・ドッグ",
+    "waterdog/spanish": "スパニッシュ・ウォーター・ドッグ",
+
+    "weimaraner": "ワイマラナー",
+    "whippet": "ウィペット",
+
+    "wolfhound": "ウルフハウンド",
+    "wolfhound/irish": "アイリッシュ・ウルフハウンド"
+}
