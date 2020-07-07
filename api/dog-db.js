@@ -5,7 +5,8 @@ import express from "express";
 import bodyParser from "body-parser";
 //import cookieParser from "cookie-parser";
 
-import mysql  from 'mysql';
+//import mysql  from 'mysql';
+import {Pool as pgPool} from "pg";
 
 import {genID} from "../assets/util";
 
@@ -15,90 +16,74 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 //app.use(cookieParser());
 
-var pool = mysql.createPool({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'root',
-  database : 'dog_db',
+var pool = new pgPool({
+  host: 'localhost',
+  user: 'postgres', 
+  password: 'postgres',
+  database: 'dog_db',
 });
+// var pool = mysql.createPool({
+//   host     : 'localhost',
+//   user     : 'root',
+//   password : 'root',
+//   database : 'dog_db',
+// });
 
-/*var conn_prom = new Promise((resolve, reject)=>{
-  console.log("connecting dog_db.");
-  var timeout = 30000;
-  var tid = setTimeout(()=>{
-    if (tid != null){
-      tid = null;
-      reject("dog_db connection timeouted.");
-    }
-  }, timeout + 100);
-  var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'root',
-    database : 'dog_db',
-    connectTimeout: timeout,
-  });
-  connection.connect((error, results, fields)=>{
+function _sql(sql, timeout=30000){
+  var tid = null;
+  function clear_query_timeout(){
     if (tid == null){
       return;
     }
     clearTimeout(tid);
     tid = null;
-    if (error){
-      console.log("dog_db connection failed.");
-      console.log(error);
-      reject(error);
-    }
-    else{
-      console.log("dog_db connect successfully.");
-      console.log(results);
-      console.log(fields);
-      resolve(connection);
-    }
-  });
-});*/
-
-function _sql(connection, sql, timeout=30000){
+  }
   return new Promise((resolve, reject) => {
-    var tid = setTimeout(()=>{
+    tid = setTimeout(()=>{
       if (tid != null){
         tid = null;
         reject("dog_db query timeouted.");
       }
     }, timeout + 100);
-    connection.query({
-      sql: sql,
-      timeout: timeout,
-      //values: []
-    }, (error, results, fields) => {
-      if (tid == null){
-        return;
-      }
-      clearTimeout(tid);
-      tid = null;
-      if (error){
-        console.log("dog_db query failed.");
-        console.log(`FAILD:${sql}`);
-        console.log(error);
-        reject(error);
+    // pool.query({//!!mysql pool
+    //   sql: sql,
+    //   timeout: timeout,
+    //   //values: []
+    // }, (error, results, fields) => {
+    //   if (error){
+    //     reject(error);
+    //   }
+    //   else{
+    //     resolve({results, fields});
+    //   }  
+    // }
+    pool.query(//!!postgres pool
+      sql, (err, res) => {
+      if (err){
+        reject(err);
       }
       else{
-        // console.log("dog_db query successfully.");
-        // console.log(fields);
-        // console.log(results);
-        resolve({results, fields});
+        //console.log(res);
+        resolve({results: res.rows, fields: res.field});
       }  
     });
+  }).then((ret)=>{
+    clear_query_timeout();
+    // console.log("dog_db query successfully.");
+    // console.log(ret.fields);
+    // console.log(ret.results);
+    return ret;
+  }, (err)=>{
+    clear_query_timeout();
+    console.log("dog_db query failed.");
+    console.log(`FAILD:${sql}`);
+    console.log(err);
+    reject(err);
   });
 }
 
 export function dog_db(sql){
-  return _sql(pool, sql);
-  /*return conn_prom.then((connection)=>{
-    return _sql(connection, sql).then((results_fields)=>{
-      return results_fields;
-    });
-  });*/
+  return _sql(sql);
 }
 
 app.get("/dog_db/user", (req, res)=>{
@@ -107,7 +92,7 @@ app.get("/dog_db/user", (req, res)=>{
   dog_db(`
     SELECT userTable.uid, uidTable.pid, uidTable.expires
       FROM uidTable, userTable
-      WHERE uidTable.pid="${pid}" AND uidTable.uid=userTable.uid
+      WHERE uidTable.pid='${pid}' AND uidTable.uid=userTable.uid
     `).then(({results, fields})=>{
     if (results.length > 0){
       res.json(results[0]);
@@ -134,10 +119,10 @@ app.get("/dog_db/newuser", async (req, res)=>{
     uid = genID();
     try{
       var {results, fields} = await dog_db(
-        `INSERT INTO userTable (uid) VALUES("${uid}")`
+        `INSERT INTO userTable (uid) VALUES('${uid}')`
       );
-      console.log(results);
-      console.log(fields);
+      // console.log(results);
+      // console.log(fields);
       break;//作成成功
     }
     catch(error){
@@ -156,10 +141,10 @@ app.get("/dog_db/newuser", async (req, res)=>{
     pid = genID();
     try{
       var {results, fields} = await dog_db(
-        `INSERT INTO uidTable (pid, uid, expires) VALUES("${pid}", "${uid}", "${expires.toLocaleString()}")`
+        `INSERT INTO uidTable (pid, uid, expires) VALUES('${pid}', '${uid}', '${expires.toLocaleString()}')`
       );
-      console.log(results);
-      console.log(fields);
+      // console.log(results);
+      // console.log(fields);
       break;//作成成功
     }
     catch(error){
@@ -178,7 +163,7 @@ app.get("/dog_db/newuser", async (req, res)=>{
     var {results, fields} = await dog_db(`
       SELECT userTable.uid, uidTable.pid, uidTable.expires
         FROM uidTable, userTable 
-        WHERE uidTable.pid="${pid}" AND uidTable.uid=userTable.uid
+        WHERE uidTable.pid='${pid}' AND uidTable.uid=userTable.uid
       `);
     if (results.length > 0){
       res.json(results[0]);
@@ -222,25 +207,33 @@ app.post("/dog_db/images", async (req, res)=>{
   }
   try{
     var imageDataList = await Promise.all(images.map(
-      (img_i)=>Promise.all([
+      (img_i)=>Promise.all([//postgresは大文字を小文字に変換するのでフィールド名を二重引用符で括る必要がある
         //res[0]:niceCnt
-        dog_db(`SELECT COUNT(*) AS niceCnt FROM evlTable WHERE img="${img_i}" AND evl>0`).then(({results, fields})=>results[0]),
+        dog_db(`SELECT COUNT(*) AS "niceCnt" FROM evlTable WHERE img='${img_i}' AND evl>0`).then(({results, fields})=>results[0]),
         //res[1]:badCnt
-        dog_db(`SELECT COUNT(*) AS badCnt FROM evlTable WHERE img="${img_i}" AND evl<0`).then(({results, fields})=>results[0]),
+        dog_db(`SELECT COUNT(*) AS "badCnt" FROM evlTable WHERE img='${img_i}' AND evl<0`).then(({results, fields})=>results[0]),
         //res[2]:favCnt
-        dog_db(`SELECT COUNT(*) AS favCnt FROM evlTable WHERE img="${img_i}" AND fav>0`).then(({results, fields})=>results[0]),
+        dog_db(`SELECT COUNT(*) AS "favCnt" FROM evlTable WHERE img='${img_i}' AND fav>0`).then(({results, fields})=>results[0]),
         //res[3]:cmtCnt
-        dog_db(`SELECT COUNT(*) AS cmtCnt FROM commentTable WHERE img="${img_i}"`).then(({results, fields})=>results[0]),
-        //res[4]:{evl, fav}//SELECT CASE WHEN evlTable.evl IS NULL THEN 0 ELSE evlTable.evl END AS evl, CASE WHEN evlTable.fav IS NULL THEN 0 ELSE evlTable.fav END AS fav FROM (SELECT "${img}" AS img, "${uid}" AS uid) AS empTbl LEFT JOIN evlTable ON empTbl.img=evlTable.img AND empTbl.uid=evlTable.uid;
-        dog_db(`SELECT evl, fav FROM evlTable WHERE img="${img_i}" AND uid="${uid}"`).then(({results, fields})=>results[0]),
+        dog_db(`SELECT COUNT(*) AS "cmtCnt" FROM commentTable WHERE img='${img_i}'`).then(({results, fields})=>results[0]),
+        //res[4]:{evl, fav}//SELECT CASE WHEN evlTable.evl IS NULL THEN 0 ELSE evlTable.evl END AS evl, CASE WHEN evlTable.fav IS NULL THEN 0 ELSE evlTable.fav END AS fav FROM (SELECT '${img}' AS img, '${uid}' AS uid) AS empTbl LEFT JOIN evlTable ON empTbl.img=evlTable.img AND empTbl.uid=evlTable.uid;
+        dog_db(`SELECT evl, fav FROM evlTable WHERE img='${img_i}' AND uid='${uid}'`).then(({results, fields})=>results[0]),
       ]).then((res)=>{
         var {niceCnt} = res[0];
         var {badCnt} = res[1];
         var {favCnt} = res[2];
         var {cmtCnt} = res[3];
         var {evl, fav} = res[4] ? res[4] : {evl:0, fav:0};
-        var imageData = {url: img_i, niceCnt, badCnt, favCnt, cmtCnt, evl, fav};
-        //console.log(imageData);
+        var imageData = {//postgresは数字が文字列で返るので数値に変換する
+          url: img_i, 
+          niceCnt: Number(niceCnt), 
+          badCnt: Number(badCnt), 
+          favCnt: Number(favCnt), 
+          cmtCnt: Number(cmtCnt), 
+          evl: Number(evl), 
+          fav: Number(fav),
+        };
+        console.log(imageData);
         return imageData;
       })
     ));
@@ -266,7 +259,13 @@ app.post("/dog_db/newimages", async (req, res)=>{
   }
   try{
     await Promise.all(
-      images.map((img_i)=>dog_db(`INSERT IGNORE INTO imageTable(img) VALUES ("${img_i}")`)));
+      images.map((img_i)=>dog_db(
+        //!!mysql
+        //`INSERT IGNORE INTO imageTable(img) VALUES ('${img_i}')`
+
+        //!!postgres
+        `INSERT INTO imageTable(img) VALUES ('${img_i}') ON CONFLICT DO NOTHING`
+      )));
   }
   catch(error){
     console.log(error);
@@ -283,7 +282,7 @@ app.get("/dog_db/evl", (req, res)=>{
   dog_db(`
     SELECT uid, img, evl, fav
       FROM evlTable
-      WHERE img="${img}" AND uid="${uid}"`).then(({results, fields})=>{
+      WHERE img='${img}' AND uid='${uid}'`).then(({results, fields})=>{
     if (results.length > 0){
       res.json(results[0]);
     }
@@ -313,15 +312,23 @@ app.post("/dog_db/evl", async (req, res)=>{
   }
   try{
     if (evl == 0 && fav == 0){
-      await dog_db(`DELETE FROM evlTable WHERE uid="${uid}" AND img="${img}"`);
+      await dog_db(`DELETE FROM evlTable WHERE uid='${uid}' AND img='${img}'`);
     }
     else{
-      await dog_db(`
-        INSERT INTO evlTable(uid, img, evl, fav) 
-          VALUES("${uid}", "${img}", ${evl}, ${fav})
-          ON DUPLICATE KEY UPDATE
-            evl="${evl}", fav="${fav}"
-        `);
+      await dog_db(
+        //!!mysql
+        // `INSERT INTO evlTable(uid, img, evl, fav) 
+        //   VALUES('${uid}', '${img}', ${evl}, ${fav})
+        //   ON DUPLICATE KEY UPDATE
+        //     evl=${evl}, fav=${fav}, date=CURRENT_TIMESTAMP`
+
+        //!!postgres
+        `INSERT INTO evlTable(uid, img, evl, fav) 
+          VALUES('${uid}', '${img}', ${evl}, ${fav})
+          ON CONFLICT (uid, img) DO UPDATE SET
+            evl=${evl}, fav=${fav}, date=CURRENT_TIMESTAMP`
+        
+        );
     }
   }
   catch(error){
@@ -338,7 +345,7 @@ app.get("/dog_db/comments", (req, res)=>{
   dog_db(`
     SELECT uid, date, comment
       FROM commentTable
-      WHERE img="${img}"`).then(({results, fields})=>{
+      WHERE img='${img}'`).then(({results, fields})=>{
     res.json(results);
     res.end();
   }, (error)=>{
@@ -361,7 +368,7 @@ app.post("/dog_db/comments", async (req, res)=>{
   try{
     await dog_db(`
       INSERT INTO commentTable(uid, img, comment) 
-        VALUES("${uid}", "${img}", "${comment}")
+        VALUES('${uid}', '${img}', '${comment}')
     `);
   }
   catch(error){

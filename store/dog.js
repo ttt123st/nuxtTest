@@ -2,7 +2,6 @@ console.log("store/dog.js")
 
 import dogAPI from "../assets/dog-api";
 import {genID, deepCopy} from "../assets/util";
-import {dogImageDataDic, dogUserDataDic} from "../assets/dog-vars";
 
 function newImageData(url){
     return {

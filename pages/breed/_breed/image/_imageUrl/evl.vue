@@ -18,7 +18,7 @@ export default {
         var nice = Number(context.query.nice);
         var bad = Number(context.query.bad);
         var fav = Number(context.query.fav);
-        var from = context.query.from;//"breed" | undefined
+        var from = context.query.from;//"breed" | "page" | undefined
         //var $cookies = context.app.$cookies;
         var $axios = context.app.$axios;
         var userData = context.store.state.dog.userData;

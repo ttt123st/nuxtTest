@@ -1,12 +1,6 @@
 console.log("middleware/dog-init.js");
 
 import {genID} from "../assets/util";
-import {dogUserDataDic, dogCookieDic} from "../assets/dog-vars";
-//import {dog_db} from "../api/dog-db";
-
-const cCookieMaxAge = 1000 * 60 * 60 * 24 * 7;
-const cCookieExpires = 1000 * 60 * 60 * 24 * 3;
-
 
 export default async (context) => {
     console.log("middleware/dog-init.js:default");
