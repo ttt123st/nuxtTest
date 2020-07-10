@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 //app.use(cookieParser());
 
 var pool = new pgPool({
-  host: process.env.DATABASE_URL || 'localhost',
+  host: process.env.DATABASE_HOST || 'localhost',
   user: process.env.DATABASE_USER || 'postgres', 
   password: process.env.DATABASE_PASSWORD || 'postgres',
   database: process.env.DATABASE_NAME || 'dog_db',
