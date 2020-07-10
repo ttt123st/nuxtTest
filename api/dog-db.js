@@ -17,10 +17,11 @@ app.use(bodyParser.json());
 //app.use(cookieParser());
 
 var pool = new pgPool({
-  host: 'localhost',
-  user: 'postgres', 
-  password: 'postgres',
-  database: 'dog_db',
+  host: process.env.DATABASE_URL || 'localhost',
+  user: process.env.DATABASE_USER || 'postgres', 
+  password: process.env.DATABASE_PASSWORD || 'postgres',
+  database: process.env.DATABASE_NAME || 'dog_db',
+  port: process.env.DATABASE_PORT || undefined,
 });
 // var pool = mysql.createPool({
 //   host     : 'localhost',

@@ -1,6 +1,6 @@
-CREATE DATABASE dog_db;
+/*CREATE DATABASE dog_db;*/
 
-\c dog_db;
+/*\c dog_db;*/
 
 CREATE TABLE userTable (
 	uid VARCHAR(256) PRIMARY KEY, 
