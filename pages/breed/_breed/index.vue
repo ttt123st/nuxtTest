@@ -5,6 +5,12 @@
 
             <hr>
 
+            <div class="content">
+                <p>
+                    {{imageDataList.length}}件の画像があります。<br>
+                    画像を選ぶとコメントを投稿できます。画像下のボタンで評価したりお気に入りに登録したりできます。
+                </p>
+            </div>
             <div class="columns is-multiline">
                 <div class="column is-3"
                     v-for="imageData of imageDataList" v-bind:key="imageData.url">

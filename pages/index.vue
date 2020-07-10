@@ -16,13 +16,19 @@
           </div>
       </div>
     </section>
+
     <section class="section">
+      <div class="content">
+        <p>犬種を指定して画像を検索できます。</p>
+      </div>
       <dog-form />
     </section>
 
     <hr>
 
     <section class="section">
+      <div class="content">
+      </div>
     </section>
 
   </div>

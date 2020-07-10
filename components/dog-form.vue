@@ -21,7 +21,7 @@
                         </div>
                     </div>
                     <div class="control">
-                        <button class="button" v-on:click="jumpSelectedBreed">移動</button>
+                        <button class="button" v-on:click="jumpSelectedBreed">決定</button>
                     </div>
                 </div>
             </div>
