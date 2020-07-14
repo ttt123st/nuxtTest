@@ -115,20 +115,18 @@
                 <span v-if="imageComments.length == 0">
                     コメントはまだありません。
                 </span>
-                <template v-else>
-                    <div class="media" v-for="(imageComment, imageComment_i) of imageComments" v-bind:key="imageComment_i">
-                        <div class="media-content">
-                            <div class="content">
-                                <div>
-                                    {{imageComment.comment}} - {{imageComment.uid}} - {{imageComment.date}}
-                                </div>
-                                <!-- <div>
-                                    {{imageComment.date}}
-                                </div> -->
+                <div v-else class="media" v-for="(imageComment, imageComment_i) of imageComments" v-bind:key="imageComment_i">
+                    <div class="media-content">
+                        <div class="content">
+                            <div>
+                                {{imageComment.comment}} - {{imageComment.uid}} - {{imageComment.date}}
                             </div>
+                            <!-- <div>
+                                {{imageComment.date}}
+                            </div> -->
                         </div>
                     </div>
-                </template>
+                </div>
             </div>
 
             <hr>

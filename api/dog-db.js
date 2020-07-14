@@ -203,6 +203,7 @@ app.post("/dog_db/images", async (req, res)=>{
 
   if (typeof(uid) != "string" || !(images instanceof Array) || 
     images.some((image_i) => typeof(image_i) != "string")){
+    console.log("invalid body format.")
     res.status(400).end();
     return;//bodyが不明な形式
   }
@@ -219,14 +220,19 @@ app.post("/dog_db/images", async (req, res)=>{
         dog_db(`SELECT COUNT(*) AS "cmtCnt" FROM commentTable WHERE img='${img_i}'`).then(({results, fields})=>results[0]),
         //res[4]:{evl, fav}//SELECT CASE WHEN evlTable.evl IS NULL THEN 0 ELSE evlTable.evl END AS evl, CASE WHEN evlTable.fav IS NULL THEN 0 ELSE evlTable.fav END AS fav FROM (SELECT '${img}' AS img, '${uid}' AS uid) AS empTbl LEFT JOIN evlTable ON empTbl.img=evlTable.img AND empTbl.uid=evlTable.uid;
         dog_db(`SELECT evl, fav FROM evlTable WHERE img='${img_i}' AND uid='${uid}'`).then(({results, fields})=>results[0]),
+        //res[5]:{breed}
+        dog_db(`SELECT breed FROM imageTable WHERE img='${img_i}'`).then(({results, fields})=>results[0]),
       ]).then((res)=>{
+        console.log(res);
         var {niceCnt} = res[0];
         var {badCnt} = res[1];
         var {favCnt} = res[2];
         var {cmtCnt} = res[3];
         var {evl, fav} = res[4] ? res[4] : {evl:0, fav:0};
+        var {breed} = res[5] ? res[5] : "";//空でないはず
         var imageData = {//postgresは数字が文字列で返るので数値に変換する
           url: img_i, 
+          breed,
           niceCnt: Number(niceCnt), 
           badCnt: Number(badCnt), 
           favCnt: Number(favCnt), 
@@ -252,20 +258,23 @@ app.post("/dog_db/newimages", async (req, res)=>{
   console.log(`on post /dog_db/newimages:`);
   console.log(req.body);
 
-  var images = req.body.images;
-  if (!(images instanceof Array) || 
-    images.some((image_i) => typeof(image_i) != "string")){
+  var newImageDataList = req.body.newImageDataList;
+  if (!(newImageDataList instanceof Array) || 
+    newImageDataList.some((newImageData) => 
+      typeof(newImageData) != "object" ||
+      typeof(newImageData.url) != "string" || 
+      typeof(newImageData.breed) != "string")){
     res.status(400).end();
     return;//bodyが不明な形式
   }
-  try{
+  try{//TODO:画像ごとにDogAPIへnewImageData.breedの画像リストを問い合わせ、newImageData.urlが登録されているか調べるべき
     await Promise.all(
-      images.map((img_i)=>dog_db(
+      newImageDataList.map((newImageData)=>dog_db(
         //!!mysql
-        //`INSERT IGNORE INTO imageTable(img) VALUES ('${img_i}')`
+        //`INSERT IGNORE INTO imageTable(img, breed) VALUES ('${newImageData.url}', '${newImageData.breed}')`
 
         //!!postgres
-        `INSERT INTO imageTable(img) VALUES ('${img_i}') ON CONFLICT DO NOTHING`
+        `INSERT INTO imageTable(img, breed) VALUES ('${newImageData.url}', '${newImageData.breed}') ON CONFLICT DO NOTHING`
       )));
   }
   catch(error){
@@ -378,6 +387,32 @@ app.post("/dog_db/comments", async (req, res)=>{
     return;   
   }
   res.status(200).end();
+});
+
+app.get("/dog_db/favimages", (req, res)=>{
+  var uid = req.query.uid;
+  console.log(`on get /dog_db/favimages?uid=${uid}:`);
+  dog_db(`SELECT img FROM evlTable WHERE uid='${uid}' AND fav=1 ORDER BY date DESC`).then(({results, fields})=>{
+    res.json(results.map((res_i)=>res_i.img));
+    res.end();
+  }, (error)=>{
+    console.log(error);
+    res.status(500).end();
+  });
+
+});
+
+app.get("/dog_db/popimages", (req, res)=>{
+  var uid = req.query.uid;
+  console.log(`on get /dog_db/popimages?uid=${uid}:`);
+  dog_db(`SELECT img, COUNT(img) AS cnt FROM evlTable WHERE evl=1 OR fav=1 GROUP BY img ORDER BY cnt DESC LIMIT 10`).then(({results, fields})=>{
+    res.json(results.map((res_i)=>res_i.img));
+    res.end();
+  }, (error)=>{
+    console.log(error);
+    res.status(500).end();
+  });
+
 });
 
 export default app;
