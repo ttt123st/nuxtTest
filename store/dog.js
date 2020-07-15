@@ -13,6 +13,7 @@ export const state = () => {
 
         favImageUrlList: [],
         popImageUrlList: [],
+        cmtImageUrlList: [],
 
         userData: null,
     };
@@ -61,6 +62,14 @@ export const mutations = {
         var images = payload.images;
 
         state.popImageUrlList = images;
+    },
+    setCmtImageUrlList(state, payload){
+        console.log("mutations:dog/setCmtImageUrlList");
+        console.log(payload);
+
+        var images = payload.images;
+
+        state.cmtImageUrlList = images;
     },
     setUserData(state, payload){
         console.log("mutations:dog/setUserData");
@@ -164,10 +173,9 @@ export const actions = {
         //console.log(payload);
 
         var $axios = payload.$axios;
-        var uid = context.state.userData.uid;
 
-        return $axios.get(`/dog_db/popimages?uid=${uid}`).then((res)=>{
-            console.log(`res /dog_db/popimages?uid=${uid}`);
+        return $axios.get(`/dog_db/popimages`).then((res)=>{
+            console.log(`res /dog_db/popimages`);
             console.log(res.data);
             var images = res.data;
             return context.dispatch("_getImageData", {
@@ -196,6 +204,26 @@ export const actions = {
                 images,
             }).then(()=>{
                 context.commit("setFavImageUrlList", {images});
+                //return context.state.favImageUrlList.map((imageUrl)=>context.state.imageDataDic[imageUrl]);
+                //return void;
+            });
+        });
+    },
+    getCmtImageDataList(context, payload){
+        console.log("actions:dog/getCmtImageDataList");
+        //console.log(payload);
+
+        var $axios = payload.$axios;
+
+        return $axios.get(`/dog_db/cmtimages`).then((res)=>{
+            console.log(`res /dog_db/cmtimages`);
+            console.log(res.data);
+            var images = res.data;
+            return context.dispatch("_getImageData", {
+                $axios, 
+                images,
+            }).then(()=>{
+                context.commit("setCmtImageUrlList", {images});
                 //return context.state.favImageUrlList.map((imageUrl)=>context.state.imageDataDic[imageUrl]);
                 //return void;
             });

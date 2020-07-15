@@ -87,27 +87,57 @@
           </div>
         </div>
       </div>
+    </section>
 
-      <footer>
-        <div class="level">
-          <div class="level-left">
-            <div class="level-item">
-                <!-- <a v-bind:href="`/`">
-                  <span class="icon is-left">
-                    <i class="fas fa-home"></i>
-                  </span>
-                  トップに戻る
-                </a> -->
-            </div>
-          </div>
-          <div class="level-right">
-            <div class="level-item">
-                <!-- -->
+    <hr>
+
+    <section class="section">
+      <div class="content">
+        <p>
+          <span class="icon">
+            <i class="fas fa-comments"></i>
+          </span>
+          新着コメントのある画像
+        </p>
+      </div>
+      <div class="columns is-multiline">
+        <div v-if="cmtImageDataList.length == 0" class="column content has-text-centered">
+          <p>コメントのある画像はありません。</p>
+        </div>
+        <div v-else class="column is-2"
+          v-for="imageData of cmtImageDataList" v-bind:key="imageData.url">
+          <div class="card">
+            <div class="card-image">
+              <a v-bind:href="`${getImageBaseUrl(imageData)}/page`">
+                <figure class="image">
+                  <img v-bind:src="imageData.url">
+                </figure>
+              </a>
             </div>
           </div>
         </div>
-      </footer>
+      </div>
     </section>
+
+    <footer>
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+              <!-- <a v-bind:href="`/`">
+                <span class="icon is-left">
+                  <i class="fas fa-home"></i>
+                </span>
+                トップに戻る
+              </a> -->
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+              <!-- -->
+          </div>
+        </div>
+      </div>
+    </footer>
   </div>
 
 </template>
@@ -127,6 +157,7 @@ export default {
       context.store.dispatch("dog/getBreedList", {$axios}),
       context.store.dispatch("dog/getPopImageDataList", {$axios}),
       context.store.dispatch("dog/getFavImageDataList", {$axios}),
+      context.store.dispatch("dog/getCmtImageDataList", {$axios}),
     ]);
   },
   computed: {
@@ -136,6 +167,10 @@ export default {
     },
     popImageDataList(){
       return this.$store.state.dog.popImageUrlList.map(
+        (imageUrl)=>this.$store.state.dog.imageDataDic[imageUrl]);
+    },
+    cmtImageDataList(){
+      return this.$store.state.dog.cmtImageUrlList.map(
         (imageUrl)=>this.$store.state.dog.imageDataDic[imageUrl]);
     },
   },
