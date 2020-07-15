@@ -404,7 +404,7 @@ app.get("/dog_db/favimages", (req, res)=>{
 
 app.get("/dog_db/popimages", (req, res)=>{
   console.log(`on get /dog_db/popimages:`);
-  dog_db(`SELECT img FROM evlTable WHERE fav=1 GROUP BY img ORDER BY MAX(date) DESC LIMIT 12`).then(({results, fields})=>{
+  dog_db(`SELECT img FROM evlTable WHERE fav=1 OR evl=1 GROUP BY img ORDER BY COUNT(img) DESC LIMIT 12`).then(({results, fields})=>{
     res.json(results.map((res_i)=>res_i.img));
     res.end();
   }, (error)=>{
