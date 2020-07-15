@@ -8,7 +8,7 @@
                 <div class="field has-addons">
                     <div class="control has-icons-left is-expanded">
                         <div class="select is-fullwidth">
-                            <select v-model="selectedBreed">
+                            <select v-model="selectedBreed" ref="breedSelect">
                                 <option 
                                     v-for="breed of breedList" 
                                     v-bind:key="breed"
@@ -47,6 +47,15 @@ export default {
             return tr == null ? breed : tr;
         },
         jumpSelectedBreed(){
+            // console.log("components/dog-form.vue:jumpSelectedBreed()")
+            // console.log(this.breed);
+            // console.log(this.selectedBreed);
+            // console.log(this.$refs.breedSelect.value);
+            //GoogleChromeでブラウザバックを行うとvueプロパティ値が反映されずにフォームに値が残ってしまう
+            //（mountedで取得、設定できなかった）ので読み込む。FireFoxでは戻るとフォーム値もクリアされた。
+            if (!this.selectedBreed && this.$refs.breedSelect.value){
+                this.selectedBreed = this.$refs.breedSelect.value;
+            }
             if (this.selectedBreed){
                 location.href = `/breed/${this.selectedBreed}`;
             }
@@ -60,5 +69,23 @@ export default {
             return this.$store.state.dog.breedTrans;
         },
     },
+    // mounted(){
+    //     console.log("components/dog-form.vue:mounted()")
+    //     console.log(this.breed);
+    //     console.log(this.selectedBreed);
+    //     console.log(this.$refs.breedSelect.value);
+    //     this.$nextTick(()=>{
+    //         console.log("components/dog-form.vue:nextTick()")
+    //         console.log(this.breed);
+    //         console.log(this.selectedBreed);
+    //         console.log(this.$refs.breedSelect.value);
+    //     });
+    // },
+    // updated(){
+    //     console.log("components/dog-form.vue:updated()")
+    //     console.log(this.breed);
+    //     console.log(this.selectedBreed);
+    //     console.log(this.$refs.breedSelect.value);
+    // },
 }
 </script>

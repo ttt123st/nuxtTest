@@ -223,7 +223,7 @@ app.post("/dog_db/images", async (req, res)=>{
         //res[5]:{breed}
         dog_db(`SELECT breed FROM imageTable WHERE img='${img_i}'`).then(({results, fields})=>results[0]),
       ]).then((res)=>{
-        console.log(res);
+        //console.log(res);
         var {niceCnt} = res[0];
         var {badCnt} = res[1];
         var {favCnt} = res[2];
@@ -240,7 +240,7 @@ app.post("/dog_db/images", async (req, res)=>{
           evl: Number(evl), 
           fav: Number(fav),
         };
-        console.log(imageData);
+        //console.log(imageData);
         return imageData;
       })
     ));

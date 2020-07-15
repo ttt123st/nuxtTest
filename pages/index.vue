@@ -119,21 +119,16 @@
       </div>
     </section>
 
-    <footer>
+    <footer class="footer">
       <div class="level">
-        <div class="level-left">
-          <div class="level-item">
-              <!-- <a v-bind:href="`/`">
-                <span class="icon is-left">
-                  <i class="fas fa-home"></i>
-                </span>
-                トップに戻る
-              </a> -->
-          </div>
-        </div>
-        <div class="level-right">
-          <div class="level-item">
-              <!-- -->
+        <div class="level-item">
+          <div class="content">
+            <a v-bind:href="`https://github.com/ttt123st/nuxtTest`">
+              <span class="icon">
+                <i class="fab fa-github"></i>
+              </span>
+              githubリポジトリ
+            </a>
           </div>
         </div>
       </div>
