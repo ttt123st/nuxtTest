@@ -197,7 +197,7 @@ export default {
             for (var i = 0; i < imageComments.length; ++i){
                 var imageComment =  imageComments[i];
                 var date = new Date(imageComment.date);
-                imageComment.date = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDay()}日${date.getHours()}:${`0${date.getMinutes()}`.slice(-2)}`;
+                imageComment.date = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日${date.getHours()}:${`0${date.getMinutes()}`.slice(-2)}`;
             }
             return {
                 breed,
