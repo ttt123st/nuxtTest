@@ -21,7 +21,7 @@
                                 高い評価
                             </p>
                             <p class="title">
-                                <a v-bind:href="`${getImageBaseUrl(imageData.url)}/evl?nice=${Number(imageData.evl!=1)}&bad=0&fav=${imageData.fav}&from=page`">
+                                <a v-bind:onclick="`javascript:location.replace('${getImageBaseUrl(imageData.url)}/evl?nice=${Number(imageData.evl!=1)}&bad=0&fav=${imageData.fav}&from=page')`">
                                     <span class="icon">
                                         <i class="fa-thumbs-up" v-bind:class="[
                                             imageData.evl > 0 ? 'fas has-text-info' : 'far has-text-dark'
@@ -40,7 +40,7 @@
                                 低い評価
                             </p>
                             <p class="title">
-                                <a v-bind:href="`${getImageBaseUrl(imageData.url)}/evl?nice=0&bad=${Number(imageData.evl!=-1)}&fav=${imageData.fav}&from=page`">
+                                <a v-bind:onclick="`javascript:location.replace('${getImageBaseUrl(imageData.url)}/evl?nice=0&bad=${Number(imageData.evl!=-1)}&fav=${imageData.fav}&from=page')`">
                                     <span class="icon">
                                         <i class="fa-thumbs-down" v-bind:class="[
                                             imageData.evl < 0 ? 'fas has-text-danger' : 'far has-text-dark'
@@ -59,7 +59,7 @@
                                 お気に入り
                             </p>
                             <p class="title">
-                                <a v-bind:href="`${getImageBaseUrl(imageData.url)}/evl?nice=${Number(imageData.evl==1)}&bad=${Number(imageData.evl==-1)}&fav=${Number(!imageData.fav)}&from=page`">
+                                <a v-bind:onclick="`javascript:location.replace('${getImageBaseUrl(imageData.url)}/evl?nice=${Number(imageData.evl==1)}&bad=${Number(imageData.evl==-1)}&fav=${Number(!imageData.fav)}&from=page')`">
                                     <span class="icon">
                                         <i class="fa-star" v-bind:class="[
                                             imageData.fav > 0 ? 'fas has-text-warning' : 'far has-text-dark'

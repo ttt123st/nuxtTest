@@ -24,7 +24,7 @@
                         </div>
                         <footer class="card-footer has-text-centered">
                             <div class="card-footer-item">
-                                <a v-bind:href="`${getImageBaseUrl(imageData.url)}/evl?nice=${Number(imageData.evl!=1)}&bad=0&fav=${imageData.fav}&from=breed`">
+                                <a v-bind:onclick="`javascript:location.replace('${getImageBaseUrl(imageData.url)}/evl?nice=${Number(imageData.evl!=1)}&bad=0&fav=${imageData.fav}&from=breed')`">
                                     <span class="icon">
                                         <i class="fa-thumbs-up" v-bind:class="[
                                             imageData.evl > 0 ? 'fas has-text-info' : 'far has-text-dark'
@@ -37,7 +37,7 @@
                                 </a>
                             </div>
                             <div class="card-footer-item">
-                                <a v-bind:href="`${getImageBaseUrl(imageData.url)}/evl?nice=0&bad=${Number(imageData.evl!=-1)}&fav=${imageData.fav}&from=breed`">
+                                <a v-bind:onclick="`javascript:location.replace('${getImageBaseUrl(imageData.url)}/evl?nice=0&bad=${Number(imageData.evl!=-1)}&fav=${imageData.fav}&from=breed')`">
                                     <span class="icon">
                                         <i class="fa-thumbs-down" v-bind:class="[
                                             imageData.evl < 0 ? 'fas has-text-danger' : 'far has-text-dark', 
@@ -50,7 +50,7 @@
                                 </a>
                             </div>
                             <div class="card-footer-item">
-                                <a v-bind:href="`${getImageBaseUrl(imageData.url)}/evl?nice=${Number(imageData.evl==1)}&bad=${Number(imageData.evl==-1)}&fav=${Number(!imageData.fav)}&from=breed`">
+                                <a v-bind:onclick="`javascript:location.replace('${getImageBaseUrl(imageData.url)}/evl?nice=${Number(imageData.evl==1)}&bad=${Number(imageData.evl==-1)}&fav=${Number(!imageData.fav)}&from=breed')`">
                                     <span class="icon">
                                         <i class="fa-star" v-bind:class="[
                                             imageData.fav ? 'fas has-text-warning' : 'far has-text-dark'
