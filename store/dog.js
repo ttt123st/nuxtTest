@@ -20,14 +20,14 @@ export const state = () => {
 };
 export const mutations = {
     setBreedList(state, payload){
-        console.log("mutations:dog/setBreedList");
-        console.log(payload);
+        // console.log("mutations:dog/setBreedList");
+        // console.log(payload);
         state.breedList = payload.breedList;
         state.breedTrans = payload.breedTrans;
     },
     setImageData(state, payload){
-        console.log("mutations:dog/setImageData");
-        console.log(payload);
+        // console.log("mutations:dog/setImageData");
+        // console.log(payload);
 
         var imageData = payload.imageData;
 
@@ -40,40 +40,40 @@ export const mutations = {
         state.imageDataDic[imageData.url] = imageData;
     },
     setImageUrlList(state, payload){
-        console.log("mutations:dog/setImageUrlList");
-        console.log(payload);
+        // console.log("mutations:dog/setImageUrlList");
+        // console.log(payload);
 
         var images = payload.images;
 
         state.imageUrlList = images;
     },
     setFavImageUrlList(state, payload){
-        console.log("mutations:dog/setFavImageUrlList");
-        console.log(payload);
+        // console.log("mutations:dog/setFavImageUrlList");
+        // console.log(payload);
 
         var images = payload.images;
 
         state.favImageUrlList = images;
     },
     setPopImageUrlList(state, payload){
-        console.log("mutations:dog/setPopImageUrlList");
-        console.log(payload);
+        // console.log("mutations:dog/setPopImageUrlList");
+        // console.log(payload);
 
         var images = payload.images;
 
         state.popImageUrlList = images;
     },
     setCmtImageUrlList(state, payload){
-        console.log("mutations:dog/setCmtImageUrlList");
-        console.log(payload);
+        // console.log("mutations:dog/setCmtImageUrlList");
+        // console.log(payload);
 
         var images = payload.images;
 
         state.cmtImageUrlList = images;
     },
     setUserData(state, payload){
-        console.log("mutations:dog/setUserData");
-        console.log(payload);
+        // console.log("mutations:dog/setUserData");
+        // console.log(payload);
 
         var userData = payload.userData;
 
