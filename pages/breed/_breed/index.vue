@@ -1,4 +1,5 @@
 <template>
+<div>
     <section class="section">
         <div class="container">
             <breed-form v-bind:breed="breed"></breed-form>
@@ -7,13 +8,13 @@
 
             <div class="content">
                 <p>
-                    {{imageDataList.length}}件の画像があります。<br>
+                    {{imageDataList.length}}件の画像があります。{{pageImageStart + 1}}件目から{{pageImageEnd}}件目を表示しています。<br>
                     画像を選ぶとコメントを投稿できます。画像下のボタンで評価したりお気に入りに登録したりできます。
                 </p>
             </div>
             <div class="columns is-multiline">
                 <div class="column is-3"
-                    v-for="imageData of imageDataList" v-bind:key="imageData.url">
+                    v-for="imageData of pageImageDataList" v-bind:key="imageData.url">
                     <div class="card">
                         <div class="card-image">
                             <a v-bind:href="`${getImageBaseUrl(imageData.url)}/page`">
@@ -66,36 +67,63 @@
                     </div>
                 </div>
             </div>
+
+            <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+                <nuxt-link class="pagination-previous" v-bind:to="`${baseUrl}?page=${page-1}`" v-bind:disabled="page-1<0" v-bind:event="page-1<0 ? '': 'click'">前へ</nuxt-link>
+                <nuxt-link class="pagination-next" v-bind:to="`${baseUrl}?page=${page+1}`" v-bind:disabled="page+1>=pageNum" v-bind:event="page+1>=pageNum ? '': 'click'">次へ</nuxt-link>
+                <ul class="pagination-list">
+                    <li v-if="page-2>=0"><nuxt-link v-bind:to="`${baseUrl}?page=${0}`" class="pagination-link" aria-label="Goto page 1">1</nuxt-link></li>
+                    <li v-if="page-1>=2"><span class="pagination-ellipsis">&hellip;</span></li>
+
+                    <li v-if="page-3>=0&&page+1>=pageNum"><nuxt-link v-bind:to="`${baseUrl}?page=${page-3}`" class="pagination-link" v-bind:aria-label="`Goto page ${page-2}`">{{page-2}}</nuxt-link></li>
+                    <li v-if="page-2>=0&&page+2>=pageNum"><nuxt-link v-bind:to="`${baseUrl}?page=${page-2}`" class="pagination-link" v-bind:aria-label="`Goto page ${page-1}`">{{page-1}}</nuxt-link></li>
+
+                    <li v-if="page-1>=0"><nuxt-link v-bind:to="`${baseUrl}?page=${page-1}`" class="pagination-link" v-bind:aria-label="`Goto page ${page}`">{{page}}</nuxt-link></li>
+                    <li><nuxt-link v-bind:to="`${baseUrl}?page=${page}`" class="pagination-link is-current" v-bind:aria-label="`Goto page ${page+1}`" aria-current="page">{{page+1}}</nuxt-link></li>
+                    <li v-if="page+1<pageNum"><nuxt-link v-bind:to="`${baseUrl}?page=${page+1}`" class="pagination-link" v-bind:aria-label="`Goto page ${page+2}`">{{page+2}}</nuxt-link></li>
+
+                    <li v-if="page+2<pageNum&&page<2"><nuxt-link v-bind:to="`${baseUrl}?page=${page+2}`" class="pagination-link" v-bind:aria-label="`Goto page ${page+3}`">{{page+3}}</nuxt-link></li>
+                    <li v-if="page+3<pageNum&&page<1"><nuxt-link v-bind:to="`${baseUrl}?page=${page+3}`" class="pagination-link" v-bind:aria-label="`Goto page ${page+4}`">{{page+4}}</nuxt-link></li>
+
+                    <li v-if="page+2<pageNum-1"><span class="pagination-ellipsis">&hellip;</span></li>
+                    <li v-if="page+2<pageNum"><nuxt-link v-bind:to="`${baseUrl}?page=${pageNum-1}`" class="pagination-link" v-bind:aria-label="`Goto page ${pageNum}`">{{pageNum}}</nuxt-link></li>
+                </ul>
+            </nav>
         </div>
+    </section>
 
-        <hr>
-
-        <footer>
-            <div class="level">
-                <div class="level-left">
-                    <div class="level-item">
-                        <a v-bind:href="`/`">
-                            <span class="icon is-left">
-                                <i class="fas fa-home"></i>
-                            </span>
-                            トップに戻る
-                        </a>
-                    </div>
-                </div>
-                <div class="level-right">
-                    <div class="level-item">
-                        <!-- -->
-                    </div>
+    <footer class="footer">
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item">
+                    <!-- -->
                 </div>
             </div>
-        </footer>
-    </section>
+            <div class="level-right">
+                <div class="level-item">
+                    <!-- -->
+                </div>
+            </div>
+
+            <div class="level-item">
+                <a v-bind:href="`/`">
+                    <span class="icon">
+                        <i class="fas fa-home"></i>
+                    </span>
+                    トップに戻る
+                </a>
+            </div>
+        </div>
+    </footer>
+</div>
 </template>
 
 <script>
 console.log("pages/breed/_breed/index.vue");
 
 import breedForm from "@/components/dog-form.vue";
+
+const cPageImageNum = 20;
 
 export default {
     components:{
@@ -107,11 +135,14 @@ export default {
         return true;
     },
     asyncData(context){
+        console.log("pages/breed/_breed/index.vue:asyncData");
+        //console.log(context);
+
         var breed = context.params.breed;
+        var page = Number(context.query.page || 0);
         //var $cookies = context.app.$cookies;
         var $axios = context.app.$axios;
-        //var userData = context.store.state.dog.userData;
-        //console.log(context);
+
         return Promise.all([
             context.store.dispatch("dog/getBreedList", {$axios}),
             context.store.dispatch("dog/getBreedImageDataList", {
@@ -119,11 +150,39 @@ export default {
                 $axios, 
             }),
         ]).then(()=>{
+            var imageNum = context.store.state.dog.imageUrlList.length;
+            var pageNum = Math.floor(imageNum / cPageImageNum) + (imageNum % cPageImageNum > 0)
+
+            console.log({page, pageNum, imageNum})
+
+            if (!(page < pageNum)){
+                context.error({statusCode: 404, message: "Invalid page number."})
+                return;
+            }
+            var pageImageStart = page * cPageImageNum;
+            var pageImageEnd = pageImageStart + cPageImageNum;
+            if (pageImageEnd >= imageNum){
+                pageImageEnd = imageNum;
+            }
+
             return {
                 breed,
+                baseUrl: context.route.path,
+                pageNum,
+                imageNum,
+                cPageImageNum,
+
+                page,
+                pageImageStart,
+                pageImageEnd,
             };
         });
     },
+    // data(){
+    //     console.log("pages/breed/_breed/index.vue:data");
+    //     return {
+    //     };
+    // },
     methods:{
         getImageBaseUrl(url){
             return `/breed/${this.breed}/image/${encodeURIComponent(url)}`
@@ -134,11 +193,38 @@ export default {
             }
             return String(num);
         },
+        updatePage(page){
+            page = Number(page);
+            if (!Number.isInteger(page) || page >= this.pageNum){
+                location.href = `${this.baseUrl}?page=${page}`;
+                return;
+            }
+            var imageNum = this.imageNum;
+            var pageImageStart = page * cPageImageNum;
+            var pageImageEnd = pageImageStart + cPageImageNum;
+            if (pageImageEnd >= imageNum){
+                pageImageEnd = imageNum;
+            }
+
+            this.page = page;
+            this.pageImageStart = pageImageStart;
+            this.pageImageEnd = pageImageEnd;
+        }
     },
     computed: {
         imageDataList(){
             return this.$store.state.dog.imageUrlList.map(
                 (imageUrl)=>this.$store.state.dog.imageDataDic[imageUrl]);
+        },
+        pageImageDataList(){
+            return this.imageDataList.slice(this.pageImageStart, this.pageImageEnd);
+        },
+    },
+    watch: {
+        $route(to, from) {
+            //console.log('pages/breed/_breed/index.vue:$route');
+            //console.log({to, from});
+            this.updatePage(to.query.page || 0);
         },
     },
 }

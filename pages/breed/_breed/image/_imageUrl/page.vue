@@ -1,4 +1,5 @@
 <template>
+<div>
     <section class="section">
         <div class="container">
 
@@ -128,35 +129,34 @@
                     </div>
                 </div>
             </div>
-
-            <hr>
-
-            <footer>
-                <div class="level">
-                    <div class="level-left">
-                        <div class="level-item">
-                            <a v-bind:href="`/breed/${breed}`">
-                                <span class="icon is-left">
-                                    <i class="fas fa-paw"></i>
-                                </span>
-                                {{transBreed(breed)}}に戻る
-                            </a>
-                        </div>
-                    </div>
-                    <div class="level-right">
-                        <div class="level-item">
-                            <a v-bind:href="`/`">
-                                <span class="icon is-left">
-                                    <i class="fas fa-home"></i>
-                                </span>
-                                トップに戻る
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
         </div>
     </section>
+
+    <footer class="footer">
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item">
+                    <a v-bind:href="`/breed/${breed}`">
+                        <span class="icon is-left">
+                            <i class="fas fa-paw"></i>
+                        </span>
+                        {{transBreed(breed)}}に戻る
+                    </a>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <a v-bind:href="`/`">
+                        <span class="icon is-left">
+                            <i class="fas fa-home"></i>
+                        </span>
+                        トップに戻る
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
 </template>
 
 <script>
@@ -211,7 +211,6 @@ export default {
     data(){
         return {
             inputComment: "",
-            postResMessage: "",
         };
     },
     methods:{
@@ -222,12 +221,6 @@ export default {
 
         getImageBaseUrl(url){
             return `/breed/${this.breed}/image/${encodeURIComponent(url)}`
-        },
-
-        postInputComment(){
-            if (this.inputComment){
-
-            }
         },
     },
     computed: {
