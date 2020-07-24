@@ -5,6 +5,7 @@ import {genID} from "../assets/util";
 export default async (context) => {
     console.log("middleware/dog-init.js:default");
     console.log(context);
+    console.log(process.env);
     var $axios = context.app.$axios;
     var $cookies = context.app.$cookies;
 
