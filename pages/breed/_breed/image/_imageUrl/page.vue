@@ -113,18 +113,15 @@
             </div>
 
             <div>
-                <span v-if="imageComments.length == 0">
+                <p v-if="imageComments.length == 0">
                     コメントはまだありません。
-                </span>
+                </p>
                 <div v-else class="media" v-for="(imageComment, imageComment_i) of imageComments" v-bind:key="imageComment_i">
                     <div class="media-content">
                         <div class="content">
-                            <div>
+                            <p>
                                 {{imageComment.comment}} - {{imageComment.uid}} - {{imageComment.date}}
-                            </div>
-                            <!-- <div>
-                                {{imageComment.date}}
-                            </div> -->
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -197,6 +194,7 @@ export default {
             for (var i = 0; i < imageComments.length; ++i){
                 var imageComment =  imageComments[i];
                 var date = new Date(imageComment.date);
+                date = new Date(date.toLocaleString("en-US", {timeZone: "Asia/Tokyo"}));//TODO:Accept-Languageなどを参照したい
                 imageComment.date = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日${date.getHours()}:${`0${date.getMinutes()}`.slice(-2)}`;
             }
             return {
