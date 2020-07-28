@@ -355,7 +355,8 @@ app.get("/dog_db/comments", (req, res)=>{
   dog_db(`
     SELECT uid, date, comment
       FROM commentTable
-      WHERE img='${img}'`).then(({results, fields})=>{
+      WHERE img='${img}'
+      ORDER BY date DESC`).then(({results, fields})=>{
     res.json(results);
     res.end();
   }, (error)=>{
@@ -380,6 +381,8 @@ app.post("/dog_db/comments", async (req, res)=>{
       INSERT INTO commentTable(uid, img, comment) 
         VALUES('${uid}', '${img}', '${comment}')
     `);
+
+    //TODO:件数が保存限界を超えたら古いコメントを消す
   }
   catch(error){
     console.log(error);

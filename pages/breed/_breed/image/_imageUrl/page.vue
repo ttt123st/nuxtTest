@@ -7,14 +7,15 @@
 
             <hr>
 
-            <div class="columns">
-                <div class="column is-10 is-offset-1">
-                    <figure class="image">
-                        <img v-bind:src="imageUrl">
-                    </figure>
-                </div>
-            </div>
             <div class="">
+                <div class="columns">
+                    <div class="column is-10 is-offset-1">
+                        <figure class="image">
+                            <img v-bind:src="imageUrl">
+                        </figure>
+                    </div>
+                </div>
+
                 <nav class="level">
                     <div class="level-item has-text-centered">
                         <div>
@@ -78,53 +79,66 @@
 
             <hr>
 
-            <div class="columns is-vcentered">
-                <div class="column is-3 has-text-centered">
-                    <div>
-                        <p class="heading">
-                            コメント
-                        </p>
-                        <p class="title">
-                            <span class="icon">
-                                <i class="far fa-comment"></i>
-                            </span>
-                            {{imageData.cmtCnt}}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="column is-9">
-                    <form v-bind:action="`${getImageBaseUrl(imageData.url)}/cmt`" method="post">
-                        <div class="field has-addons">
-                            <p class="control is-expanded">
-                                <input class="input" type="text" name="comment" placeholder="コメントを入力"
-                                    v-model="inputComment">
+            <div class="">
+                <div class="columns is-vcentered">
+                    <div class="column is-3 has-text-centered">
+                        <div>
+                            <p class="heading">
+                                コメント
                             </p>
-                            <p class="control">
-                                <input type=submit class="button" value="投稿">
-                            </p>
-                        </div>
-                        <!-- 
-                        <input type="hidden" name="uid" v-bind:value="$store.state.dog.userData.uid">
-                        <input type="hidden" name="img" v-bind:value="imageUrl">
-                        -->
-                    </form>
-                </div>
-            </div>
-
-            <div>
-                <p v-if="imageComments.length == 0">
-                    コメントはまだありません。
-                </p>
-                <div v-else class="media" v-for="(imageComment, imageComment_i) of imageComments" v-bind:key="imageComment_i">
-                    <div class="media-content">
-                        <div class="content">
-                            <p>
-                                {{imageComment.comment}} - {{imageComment.uid}} - {{imageComment.date}}
+                            <p class="title">
+                                <span class="icon">
+                                    <i class="far fa-comment"></i>
+                                </span>
+                                {{imageData.cmtCnt}}
                             </p>
                         </div>
                     </div>
+
+                    <div class="column is-9">
+                        <form v-bind:action="`${getImageBaseUrl(imageData.url)}/cmt`" method="post">
+                            <div class="field has-addons">
+                                <p class="control is-expanded">
+                                    <input class="input" type="text" name="comment" placeholder="コメントを入力"
+                                        v-model="inputComment">
+                                </p>
+                                <p class="control">
+                                    <input type=submit class="button" value="投稿">
+                                </p>
+                            </div>
+                            <!-- 
+                            <input type="hidden" name="uid" v-bind:value="$store.state.dog.userData.uid">
+                            <input type="hidden" name="img" v-bind:value="imageUrl">
+                            -->
+                        </form>
+                    </div>
                 </div>
+
+                <div class="content">
+                    <p v-if="pageComments.length == 0">
+                        コメントはまだありません。
+                    </p>
+                    <div v-else>
+                        <p>
+                            最新のコメントの{{pageCommentStart + 1}}件目から{{pageCommentEnd}}件目を表示しています。
+                        </p>
+                        <div class="media" v-for="(comment, comment_i) of pageComments" v-bind:key="comment_i">
+                            <div class="media-content">
+                                <div class="content">
+                                    <p>
+                                        {{comment.comment}} - {{comment.uid}}
+                                        <span v-if="comment.uid==uid">
+                                            (あなた)
+                                        </span>
+                                        - {{comment.date}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <pagination pageName="cmtp" v-bind:pageNum="commentPageNum"></pagination>
             </div>
         </div>
     </section>
@@ -160,10 +174,14 @@
 console.log("pages/breed/_breed/image/_imageUrl/page.vue");
 
 import breedForm from "@/components/dog-form.vue";
+import pagination from "@/components/pagination.vue";
+
+const cPageCommentNum = 20;
 
 export default {
     components:{
         breedForm,
+        pagination,
     },
 
     validate(context){
@@ -190,17 +208,32 @@ export default {
             }),
             $axios.get(`/dog_db/comments?img=${imageUrl_enc}`).then((res)=>res.data),
         ]).then((res)=>{
-            var imageComments = res[2];
-            for (var i = 0; i < imageComments.length; ++i){
-                var imageComment =  imageComments[i];
-                var date = new Date(imageComment.date);
+            var comments = res[2];
+            var commentPage = Number(context.route.query.cmtp || 0);//コメントページ番号をクエリパラメータcmtpから読み込む
+            var commentPageNum = Math.floor(comments.length / cPageCommentNum) + (comments.length % cPageCommentNum > 0)
+            if (!Number.isInteger(commentPage) || !(commentPageNum == 0 || commentPage < commentPageNum)){
+                context.error({statusCode: 404, message: "Invalid comment page number."})
+                return;
+            }
+            var pageCommentStart = commentPage * cPageCommentNum;
+            var pageCommentEnd = pageCommentStart + cPageCommentNum;
+            if (pageCommentEnd > comments.length){
+                pageCommentEnd = comments.length;
+            }
+            for (var i = 0; i < comments.length; ++i){//コメント日付の整形
+                var comment_i =  comments[i];
+                var date = new Date(comment_i.date);
                 date = new Date(date.toLocaleString("en-US", {timeZone: "Asia/Tokyo"}));//TODO:Accept-Languageなどを参照したい
-                imageComment.date = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日${date.getHours()}:${`0${date.getMinutes()}`.slice(-2)}`;
+                comment_i.date = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日${date.getHours()}:${`0${date.getMinutes()}`.slice(-2)}`;
             }
             return {
                 breed,
                 imageUrl,
-                imageComments,
+                comments,
+                commentPage,
+                commentPageNum,
+                pageCommentStart,
+                pageCommentEnd,
             };
         }, (error)=>{
             context.error({statusCode: 404, message: String(error)});
@@ -220,11 +253,37 @@ export default {
         getImageBaseUrl(url){
             return `/breed/${this.breed}/image/${encodeURIComponent(url)}`
         },
+        updateCommentPage(cmtp){
+            var commentPage = Number(cmtp || 0);
+            if (!Number.isInteger(commentPage) || !(this.commentPageNum == 0 || commentPage < this.commentPageNum)){
+                location.href = `${this.baseUrl}?cmtp=${commentPage}`;
+                return;
+            }
+            var pageCommentStart = commentPage * cPageCommentNum;
+            var pageCommentEnd = pageCommentStart + cPageCommentNum;
+            if (pageCommentEnd > this.comments.length){
+                pageCommentEnd = this.comments.length;
+            }
+            this.commentPage = commentPage;
+            this.pageCommentStart = pageCommentStart;
+            this.pageCommentEnd = pageCommentEnd;
+        },
     },
     computed: {
+        uid(){
+            return this.$store.state.dog.userData.uid;
+        },
         imageData(){
             return this.$store.state.dog.imageDataDic[this.imageUrl];
         },
-    }
+        pageComments(){
+            return this.comments.slice(this.pageCommentStart, this.pageCommentEnd);
+        },
+    },
+    watch: {
+        $route(to, from){
+            this.updateCommentPage(to.query.cmtp);
+        },
+    },
 }
 </script>

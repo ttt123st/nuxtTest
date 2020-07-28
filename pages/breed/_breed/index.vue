@@ -68,27 +68,7 @@
                 </div>
             </div>
 
-            <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-                <nuxt-link class="pagination-previous" v-bind:to="`${baseUrl}?page=${page-1}`" v-bind:disabled="page-1<0" v-bind:event="page-1<0 ? '': 'click'">前へ</nuxt-link>
-                <nuxt-link class="pagination-next" v-bind:to="`${baseUrl}?page=${page+1}`" v-bind:disabled="page+1>=pageNum" v-bind:event="page+1>=pageNum ? '': 'click'">次へ</nuxt-link>
-                <ul class="pagination-list">
-                    <li v-if="page-2>=0"><nuxt-link v-bind:to="`${baseUrl}?page=${0}`" class="pagination-link" aria-label="Goto page 1">1</nuxt-link></li>
-                    <li v-if="page-1>=2"><span class="pagination-ellipsis">&hellip;</span></li>
-
-                    <li v-if="page-3>=0&&page+1>=pageNum"><nuxt-link v-bind:to="`${baseUrl}?page=${page-3}`" class="pagination-link" v-bind:aria-label="`Goto page ${page-2}`">{{page-2}}</nuxt-link></li>
-                    <li v-if="page-2>=0&&page+2>=pageNum"><nuxt-link v-bind:to="`${baseUrl}?page=${page-2}`" class="pagination-link" v-bind:aria-label="`Goto page ${page-1}`">{{page-1}}</nuxt-link></li>
-
-                    <li v-if="page-1>=0"><nuxt-link v-bind:to="`${baseUrl}?page=${page-1}`" class="pagination-link" v-bind:aria-label="`Goto page ${page}`">{{page}}</nuxt-link></li>
-                    <li><nuxt-link v-bind:to="`${baseUrl}?page=${page}`" class="pagination-link is-current" v-bind:aria-label="`Goto page ${page+1}`" aria-current="page">{{page+1}}</nuxt-link></li>
-                    <li v-if="page+1<pageNum"><nuxt-link v-bind:to="`${baseUrl}?page=${page+1}`" class="pagination-link" v-bind:aria-label="`Goto page ${page+2}`">{{page+2}}</nuxt-link></li>
-
-                    <li v-if="page+2<pageNum&&page<2"><nuxt-link v-bind:to="`${baseUrl}?page=${page+2}`" class="pagination-link" v-bind:aria-label="`Goto page ${page+3}`">{{page+3}}</nuxt-link></li>
-                    <li v-if="page+3<pageNum&&page<1"><nuxt-link v-bind:to="`${baseUrl}?page=${page+3}`" class="pagination-link" v-bind:aria-label="`Goto page ${page+4}`">{{page+4}}</nuxt-link></li>
-
-                    <li v-if="page+2<pageNum-1"><span class="pagination-ellipsis">&hellip;</span></li>
-                    <li v-if="page+2<pageNum"><nuxt-link v-bind:to="`${baseUrl}?page=${pageNum-1}`" class="pagination-link" v-bind:aria-label="`Goto page ${pageNum}`">{{pageNum}}</nuxt-link></li>
-                </ul>
-            </nav>
+            <pagination pageName="page" v-bind:pageNum="pageNum"></pagination>
         </div>
     </section>
 
@@ -122,12 +102,14 @@
 console.log("pages/breed/_breed/index.vue");
 
 import breedForm from "@/components/dog-form.vue";
+import pagination from "@/components/pagination.vue";
 
 const cPageImageNum = 20;
 
 export default {
     components:{
         breedForm,
+        pagination,
     },
 
     validate(context){
@@ -155,7 +137,7 @@ export default {
 
             console.log({page, pageNum, imageNum})
 
-            if (!(page < pageNum)){
+            if (!Number.isInteger(page) || !(page < pageNum)){
                 context.error({statusCode: 404, message: "Invalid page number."})
                 return;
             }
@@ -195,7 +177,7 @@ export default {
         },
         updatePage(page){
             page = Number(page);
-            if (!Number.isInteger(page) || page >= this.pageNum){
+            if (!Number.isInteger(page) || !(page < this.pageNum)){
                 location.href = `${this.baseUrl}?page=${page}`;
                 return;
             }
